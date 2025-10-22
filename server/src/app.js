@@ -10,13 +10,19 @@ const app = express();
  */
 
 // Enable CORS for all routes (allows frontend to call backend)
-app.use(
-  cors({
-    origin: https://web-scrapper-rih7.onrender.com
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'https://web-scrapper-rih7.onrender.com'
+];
+
+app.use(cors({
+  origin: (origin, cb) => {
+    // allow requests with no origin (e.g. server-to-server, curl)
+    if (!origin) return cb(null, true);
+    cb(allowedOrigins.includes(origin) ? null : new Error('Not allowed by CORS'), allowedOrigins.includes(origin));
+  }
+}));
 
 // Parse JSON request bodies
 app.use(express.json());
