@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ScraperForm from './components/ScraperForm';
+import ScraperForm from './components/ScraperForm ';
 import ResultsDisplay from './components/ResultsDisplay';
 import History from './components/History';
 import { scrapeWebsite, getAllScrapedData, deleteScrapedData, checkServerHealth } from './services/api';
