@@ -12,7 +12,8 @@ const app = express();
 // Enable CORS for all routes (allows frontend to call backend)
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: https://web-scrapper-rih7.onrender.com
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
