@@ -5,10 +5,19 @@ import axios from 'axios';
  * In development, backend runs on localhost:5000
  * In production, replace with your deployed backend URL
  */
-const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_BASE_URL = `${API_URL}/api`;
 
 /**
- * Create axios instance with default config
+ * Create default axios instance
+ */
+const api = axios.create({
+  baseURL: API_URL,
+  timeout: 10000, // 10 seconds for general API calls
+});
+
+/**
+ * Create another axios instance for API calls within /api endpoints
  */
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -102,9 +111,7 @@ export const deleteScrapedData = async (id) => {
  */
 export const checkServerHealth = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL.replace('/api', '')}/health`, {
-      timeout: 5000,
-    });
+    const response = await axios.get(`${API_URL}/health`, { timeout: 5000 });
     return response.data;
   } catch (error) {
     console.error('API Error - checkServerHealth:', error);
@@ -118,7 +125,7 @@ export const checkServerHealth = async () => {
  */
 export const fetchFromEndpoint = async () => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/endpoint`);
+    const response = await axios.get(`${API_URL}/api/endpoint`);
     return response.data;
   } catch (error) {
     console.error('API Error - fetchFromEndpoint:', error);
@@ -135,3 +142,8 @@ export const fetchFromEndpoint = async () => {
     throw new Error(errorMessage);
   }
 };
+
+/**
+ * Default export for general API usage
+ */
+export default api;

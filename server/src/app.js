@@ -6,38 +6,47 @@ const scraperRoutes = require('./routes/scraperRoutes');
 const app = express();
 
 /**
- * Middleware Configuration
+ * 🌐 CORS Configuration
+ *
+ * - Allows frontend requests to access the backend.
+ * - In production, restrict origins for security.
+ * - For local development, allows localhost.
  */
-
-// Enable CORS for all routes (allows frontend to call backend)
-
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
-  'https://web-scrapper-rih7.onrender.com'
+  'https://web-scrapper-1-qz8d.onrender.com'
 ];
 
 app.use(cors({
   origin: (origin, cb) => {
-    // allow requests with no origin (e.g. server-to-server, curl)
+    // Allow requests with no origin (like curl or server-to-server)
     if (!origin) return cb(null, true);
-    cb(allowedOrigins.includes(origin) ? null : new Error('Not allowed by CORS'), allowedOrigins.includes(origin));
+
+    if (allowedOrigins.includes(origin)) {
+      return cb(null, true);
+    } else {
+      return cb(new Error('Not allowed by CORS'));
+    }
   }
 }));
 
-// Parse JSON request bodies
-app.use(express.json());
+// 🔹 Optional: Uncomment below line for testing (use ONLY in local testing)
+// app.use(cors());
 
-// Parse URL-encoded request bodies
+/**
+ * 🧩 Middleware
+ */
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging middleware
+// Simple request logger
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - ${new Date().toISOString()}`);
   next();
 });
 
 /**
- * Routes
+ * 🚀 Routes
  */
 
 // Health check endpoint
@@ -49,7 +58,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
+// Main API routes
 app.use('/api', scraperRoutes);
 
 // 404 handler for undefined routes
@@ -60,7 +69,9 @@ app.use((req, res) => {
   });
 });
 
-// Global error handler
+/**
+ * ⚠️ Global Error Handler
+ */
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err.stack);
   res.status(500).json({
